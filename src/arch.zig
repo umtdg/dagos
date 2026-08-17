@@ -6,6 +6,7 @@ pub const arch = switch (builtin.cpu.arch) {
 };
 
 pub const assembly = arch.assembly;
+pub const context = arch.context;
 pub const cpu = arch.cpu;
 pub const exceptions = arch.exceptions;
 pub const memory = arch.memory;

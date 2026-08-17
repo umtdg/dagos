@@ -1,10 +1,5 @@
 const arch = @import("arch.zig");
 
-pub extern fn switchContext(
-    prev_sp: *arch.memory.VirtualAddress,
-    next_sp: *const arch.memory.VirtualAddress,
-) callconv(.c) void;
-
 pub const MAX_PROCESS_COUNT = 8;
 pub const PROCESS_STACK_SIZE = 8192;
 
@@ -45,6 +40,10 @@ pub const Process = struct {
 };
 
 pub fn init() void {
+    for (&processes) |*p| {
+        p.state = .Unused;
+    }
+
     idle_process = Process.spawn(0);
     idle_process.pid = 0;
     current_process = idle_process;
@@ -60,5 +59,5 @@ pub fn yield() void {
 
     const prev_process: *Process = current_process;
     current_process = next_process;
-    switchContext(&prev_process.sp, &next_process.sp);
+    arch.context.switchContext(&prev_process.sp, &next_process.sp);
 }

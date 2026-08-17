@@ -8,7 +8,7 @@ const platform = @import("platform.zig");
 const process = @import("process.zig");
 
 comptime {
-    _ = @import("arch/aarch64/exceptions.zig");
+    _ = arch.exceptions;
 }
 
 extern var __bss: [0]u8;
@@ -25,11 +25,10 @@ fn panicHandler(msg: []const u8, first_trace_addr: ?usize) noreturn {
 }
 
 fn delay() void {
-    for (0..30000000) |_| {}
+    for (0..30000000) |_| {
+        arch.assembly.nop();
+    }
 }
-
-var procA: *process.Process = undefined;
-var procB: *process.Process = undefined;
 
 fn procAEntry() void {
     console.println("starting process A", .{});
@@ -50,6 +49,8 @@ fn procBEntry() void {
 }
 
 export fn kmain() callconv(.c) noreturn {
+    platform.init();
+
     var page_allocator = memory.PageAllocator.init(
         &platform.physicalMemory(),
         @intFromPtr(&__kernel_end),
@@ -63,8 +64,8 @@ export fn kmain() callconv(.c) noreturn {
     console.print("paddr0={d}\n", .{paddr0});
     console.print("paddr1={d}\n", .{paddr1});
 
-    procA = process.Process.spawn(@intFromPtr(&procAEntry));
-    procB = process.Process.spawn(@intFromPtr(&procBEntry));
+    _ = process.Process.spawn(@intFromPtr(&procAEntry));
+    _ = process.Process.spawn(@intFromPtr(&procBEntry));
 
     process.yield();
     @panic("Switched to idle process");
