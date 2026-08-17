@@ -56,6 +56,8 @@ export fn kmain() callconv(.c) noreturn {
         0x1000, // 4096
     );
 
+    process.init();
+
     const paddr0 = page_allocator.allocPages(2);
     const paddr1 = page_allocator.allocPages(1);
     console.print("paddr0={d}\n", .{paddr0});

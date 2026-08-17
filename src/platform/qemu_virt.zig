@@ -1,5 +1,5 @@
 const arch = @import("../arch.zig").arch;
-const PhysicalAddress = arch.memory.PhsycialAddress;
+const PhysicalAddress = arch.memory.PhysicalAddress;
 
 const drivers = @import("../drivers.zig");
 const memory = @import("../memory.zig");

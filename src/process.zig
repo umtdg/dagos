@@ -5,23 +5,23 @@ pub extern fn switchContext(
     next_sp: *const arch.memory.VirtualAddress,
 ) callconv(.c) void;
 
-pub const MAX = 8;
-pub const STACK_SIZE = 8192;
+pub const MAX_PROCESS_COUNT = 8;
+pub const PROCESS_STACK_SIZE = 8192;
 
-var processes: [MAX]Process = undefined;
+var processes: [MAX_PROCESS_COUNT]Process = undefined;
 var current_process: *Process = undefined;
 var idle_process: *Process = undefined;
 
-pub const State = enum(u8) {
+pub const ProcessState = enum {
     Unused,
     Runnable,
 };
 
 pub const Process = struct {
     pid: u32,
-    state: State,
+    state: ProcessState,
     sp: arch.memory.VirtualAddress,
-    stack: [STACK_SIZE]u8 align(arch.cpu.STACK_ALIGNMENT),
+    stack: [PROCESS_STACK_SIZE]u8 align(arch.cpu.STACK_ALIGNMENT),
 
     pub fn spawn(pc: arch.memory.VirtualAddress) *Process {
         const process: *Process = blk: for (&processes, 0..) |*p, i| {
@@ -51,8 +51,8 @@ pub fn init() void {
 }
 
 pub fn yield() void {
-    var next_process: *Process = blk: for (0..MAX) |i| {
-        const p: *Process = &processes[(current_process.pid + i) % MAX];
+    var next_process: *Process = blk: for (0..MAX_PROCESS_COUNT) |i| {
+        const p: *Process = &processes[(current_process.pid + i) % MAX_PROCESS_COUNT];
         if (p.state == .Runnable and p.pid > 0) {
             break :blk p;
         }

@@ -1,7 +1,7 @@
 const std = @import("std");
 
 const arch = @import("arch.zig").arch;
-const PhysicalAddress = arch.memory.PhsycialAddress;
+const PhysicalAddress = arch.memory.PhysicalAddress;
 
 pub fn asPtr(comptime Address: type, comptime Pointer: type, address: Address) Pointer {
     return @ptrFromInt(address);
