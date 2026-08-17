@@ -25,9 +25,7 @@ fn panicHandler(msg: []const u8, first_trace_addr: ?usize) noreturn {
 }
 
 fn delay() void {
-    for (0..300000000) |_| {
-        arch.assembly.nop();
-    }
+    for (0..30000000) |_| {}
 }
 
 var procA: *process.Process = undefined;
@@ -37,7 +35,7 @@ fn procAEntry() void {
     console.println("starting process A", .{});
     while (true) {
         console.print("A", .{});
-        process.switchContext(&procA.sp, &procB.sp);
+        process.yield();
         delay();
     }
 }
@@ -46,7 +44,7 @@ fn procBEntry() void {
     console.println("starting process B", .{});
     while (true) {
         console.print("B", .{});
-        process.switchContext(&procB.sp, &procA.sp);
+        process.yield();
         delay();
     }
 }
@@ -65,7 +63,7 @@ export fn kmain() callconv(.c) noreturn {
 
     procA = process.Process.spawn(@intFromPtr(&procAEntry));
     procB = process.Process.spawn(@intFromPtr(&procBEntry));
-    procAEntry();
 
-    arch.cpu.halt();
+    process.yield();
+    @panic("Switched to idle process");
 }

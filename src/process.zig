@@ -9,6 +9,8 @@ pub const MAX = 8;
 pub const STACK_SIZE = 8192;
 
 var processes: [MAX]Process = undefined;
+var current_process: *Process = undefined;
+var idle_process: *Process = undefined;
 
 pub const State = enum(u8) {
     Unused,
@@ -41,3 +43,22 @@ pub const Process = struct {
         return process;
     }
 };
+
+pub fn init() void {
+    idle_process = Process.spawn(0);
+    idle_process.pid = 0;
+    current_process = idle_process;
+}
+
+pub fn yield() void {
+    var next_process: *Process = blk: for (0..MAX) |i| {
+        const p: *Process = &processes[(current_process.pid + i) % MAX];
+        if (p.state == .Runnable and p.pid > 0) {
+            break :blk p;
+        }
+    } else return;
+
+    const prev_process: *Process = current_process;
+    current_process = next_process;
+    switchContext(&prev_process.sp, &next_process.sp);
+}
