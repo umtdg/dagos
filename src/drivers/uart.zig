@@ -1,5 +1,4 @@
 const arch = @import("../arch.zig");
-const PhsycialAddress = arch.memory.PhsycialAddress;
 const VirtualAddress = arch.memory.VirtualAddress;
 
 pub const Pl011 = struct {
@@ -23,11 +22,14 @@ pub const Pl011 = struct {
     }
 
     pub inline fn writeByte(self: *const Pl011, byte: u8) void {
-        while (self.fr().* & FR_TXFF != 0) {
-            arch.assembly.wfe();
+        const self_fr = self.fr();
+        const self_dr = self.dr();
+
+        while (self_fr.* & FR_TXFF != 0) {
+            arch.assembly.nop();
         }
 
-        self.dr().* = @intCast(byte);
+        self_dr.* = @intCast(byte);
     }
 
     pub inline fn write(self: *const Pl011, bytes: []const u8) void {

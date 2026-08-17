@@ -60,8 +60,9 @@ pub fn build(b: *std.Build) void {
         // zig fmt: off
         "qemu-system-aarch64",
         "-machine", "virt",
-        // "-S", "-s",
         "-cpu", "cortex-a72",
+        "-m", "128M",
+        "-smp", "1",
         "-serial", "mon:stdio",
         "--no-reboot",
         "-nographic",

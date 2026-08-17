@@ -1,11 +1,11 @@
 const std = @import("std");
 const builtin = std.builtin;
 
+const arch = @import("arch.zig");
 const console = @import("console.zig");
 const memory = @import("memory.zig");
-
-const arch = @import("arch.zig");
 const platform = @import("platform.zig");
+const process = @import("process.zig");
 
 comptime {
     _ = @import("arch/aarch64/exceptions.zig");
@@ -21,8 +21,33 @@ fn panicHandler(msg: []const u8, first_trace_addr: ?usize) noreturn {
     _ = first_trace_addr;
     console.print("KERNEL PANIC: {s}\n", .{msg});
 
+    arch.cpu.halt();
+}
+
+fn delay() void {
+    for (0..300000000) |_| {
+        arch.assembly.nop();
+    }
+}
+
+var procA: *process.Process = undefined;
+var procB: *process.Process = undefined;
+
+fn procAEntry() void {
+    console.println("starting process A", .{});
     while (true) {
-        asm volatile ("wfe");
+        console.print("A", .{});
+        process.switchContext(&procA.sp, &procB.sp);
+        delay();
+    }
+}
+
+fn procBEntry() void {
+    console.println("starting process B", .{});
+    while (true) {
+        console.print("B", .{});
+        process.switchContext(&procB.sp, &procA.sp);
+        delay();
     }
 }
 
@@ -37,6 +62,10 @@ export fn kmain() callconv(.c) noreturn {
     const paddr1 = page_allocator.allocPages(1);
     console.print("paddr0={d}\n", .{paddr0});
     console.print("paddr1={d}\n", .{paddr1});
+
+    procA = process.Process.spawn(@intFromPtr(&procAEntry));
+    procB = process.Process.spawn(@intFromPtr(&procBEntry));
+    procAEntry();
 
     arch.cpu.halt();
 }
