@@ -13,7 +13,7 @@ pub const ExceptionFrame = extern struct {
     far_el1: memory.PhsycialAddress,
 };
 
-fn exceptionHandler(frame: *const ExceptionFrame) callconv(.c) void {
+export fn exceptionHandler(frame: *const ExceptionFrame) callconv(.c) void {
     for (frame.x, 0..) |x, i| {
         if (i % 2 == 1) {
             console.println("x[{d}]=0x{x}", .{ i, x });

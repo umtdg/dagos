@@ -8,9 +8,8 @@ const arch = @import("arch.zig");
 const platform = @import("platform.zig");
 
 comptime {
-    _ = @import("exception.zig");
+    _ = @import("arch/aarch64/exceptions.zig");
 }
-const uart = @import("uart.zig");
 
 extern var __bss: [0]u8;
 extern var __bss_end: [0]u8;
