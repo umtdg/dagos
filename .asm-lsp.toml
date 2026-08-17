@@ -7,11 +7,11 @@ instruction_set = "arm64"
 compiler = "zig"
 compile_flags_txt = [
     "cc",
-    "-x",
-    "assembler-with-cpp",
-    "-target",
-    "aarch64-freestanding",
+    "-x", "assembler-with-cpp",
+    "-target", "aarch64-freestanding",
     "-mcpu=generic",
+    "-c",
+    "-o", "-",
 ]
 diagnostics = true
 default_diagnostics = false
