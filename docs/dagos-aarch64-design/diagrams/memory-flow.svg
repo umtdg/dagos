@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1100" viewBox="0 0 1500 1100" role="img" aria-labelledby="title desc">
+  <title id="title">Dagos memory-management layering</title>
+  <desc id="desc">Shows firmware memory description becoming usable physical frames, page-table mappings, virtual ranges, kernel heap and process address spaces.</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker><style>.b{fill:#fff;stroke:#222;stroke-width:2;rx:10}.t{font:19px sans-serif;fill:#111}.h{font:700 28px sans-serif;fill:#111}.s{font:16px sans-serif;fill:#222}.l{stroke:#222;stroke-width:2.5;fill:none;marker-end:url(#a)}.d{stroke:#555;stroke-width:2;stroke-dasharray:8 8;fill:none;marker-end:url(#a)}</style></defs>
+  <text class="h" x="750" y="42" text-anchor="middle">Memory-management ownership and data flow</text>
+
+  <rect class="b" x="450" y="85" width="600" height="100"/><text class="t" x="750" y="122" text-anchor="middle">Firmware Device Tree / loader reservations</text><text class="s" x="750" y="151" text-anchor="middle">/memory · memreserve · /reserved-memory · DTB location</text>
+  <path class="l" d="M750 185 L750 245"/>
+  <rect class="b" x="450" y="245" width="600" height="125"/><text class="t" x="750" y="283" text-anchor="middle">Early immutable MemoryMap</text><text class="s" x="750" y="314" text-anchor="middle">usable RAM minus kernel, stacks, DTB, firmware reservations</text><text class="s" x="750" y="342" text-anchor="middle">all ranges use checked half-open [start,end) representation</text>
+
+  <path class="l" d="M600 370 L390 450"/>
+  <path class="l" d="M900 370 L1110 450"/>
+
+  <rect class="b" x="90" y="450" width="600" height="135"/><text class="t" x="390" y="488" text-anchor="middle">Physical allocation</text><text class="s" x="390" y="520" text-anchor="middle">early bump allocator → later bitmap PMM</text><text class="s" x="390" y="548" text-anchor="middle">returns PhysicalFrame / PhysicalRange, never pointers</text>
+  <rect class="b" x="810" y="450" width="600" height="135"/><text class="t" x="1110" y="488" text-anchor="middle">Virtual range ownership</text><text class="s" x="1110" y="520" text-anchor="middle">kernel vmalloc region / process VMA ranges</text><text class="s" x="1110" y="548" text-anchor="middle">reserving VA does not allocate RAM</text>
+
+  <path class="l" d="M390 585 L540 675"/>
+  <path class="l" d="M1110 585 L960 675"/>
+  <rect class="b" x="450" y="675" width="600" height="145"/><text class="t" x="750" y="714" text-anchor="middle">AArch64 page-table manager</text><text class="s" x="750" y="746" text-anchor="middle">4 KiB granule · table pages from PMM · map/unmap/protect</text><text class="s" x="750" y="774" text-anchor="middle">Normal RAM vs Device MMIO attributes · permission bits</text><text class="s" x="750" y="802" text-anchor="middle">TLBI + DSB/ISB rules are part of this boundary</text>
+
+  <path class="l" d="M600 820 L390 900"/>
+  <path class="l" d="M900 820 L1110 900"/>
+  <rect class="b" x="90" y="900" width="600" height="130"/><text class="t" x="390" y="938" text-anchor="middle">Kernel virtual memory + heap</text><text class="s" x="390" y="970" text-anchor="middle">reserve VA → allocate frames → map → allocator manages bytes</text><text class="s" x="390" y="998" text-anchor="middle">kernel text/rodata/data/direct-map are separate mapped regions</text>
+  <rect class="b" x="810" y="900" width="600" height="130"/><text class="t" x="1110" y="938" text-anchor="middle">Process address space</text><text class="s" x="1110" y="970" text-anchor="middle">TTBR0_EL1 user mappings + VMAs + user stack/text/data</text><text class="s" x="1110" y="998" text-anchor="middle">TTBR1_EL1 keeps shared kernel mappings</text>
+
+  <path class="d" d="M390 450 L390 245"/><text class="s" x="250" y="330" text-anchor="middle">reservations constrain allocator</text>
+</svg>

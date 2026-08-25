@@ -1,11 +1,10 @@
 const config = @import("config");
 
-pub const Platform = enum {
-    qemu_virt,
-};
-
 const platform = switch (config.platform) {
-    .qemu_virt => @import("platform/qemu_virt.zig"),
+    .virt => @import("platform/virt.zig"),
+    .raspi3b => @import("platform/raspi3b.zig"),
+    .raspi4b => @import("platform/raspi4b.zig"),
+    .raspi5b => @import("platform/raspi5b.zig"),
 };
 
 pub const init = platform.init;

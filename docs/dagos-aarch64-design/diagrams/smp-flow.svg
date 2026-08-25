@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1200" viewBox="0 0 1500 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Dagos SMP secondary CPU bring-up</title>
+  <desc id="desc">Primary CPU discovers topology and releases secondary CPUs, each secondary establishes EL1 state, stack, MMU, per-CPU data, interrupt interface, then publishes online.</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker><style>.b{fill:#fff;stroke:#222;stroke-width:2;rx:10}.t{font:19px sans-serif;fill:#111}.h{font:700 28px sans-serif;fill:#111}.s{font:16px sans-serif;fill:#222}.l{stroke:#222;stroke-width:2.5;fill:none;marker-end:url(#a)}.sep{stroke:#555;stroke-width:2;stroke-dasharray:10 8}</style></defs>
+  <text class="h" x="750" y="42" text-anchor="middle">Secondary CPU bring-up</text>
+  <text class="t" x="370" y="90" text-anchor="middle">Boot CPU</text><text class="t" x="1130" y="90" text-anchor="middle">Secondary CPU</text>
+  <line class="sep" x1="750" y1="75" x2="750" y2="1160"/>
+
+  <rect class="b" x="90" y="130" width="560" height="105"/><text class="t" x="370" y="168" text-anchor="middle">Parse `/cpus` from FDT</text><text class="s" x="370" y="198" text-anchor="middle">MPIDR · status · enable-method · cpu-release-addr</text>
+  <path class="l" d="M370 235 L370 290"/>
+  <rect class="b" x="90" y="290" width="560" height="120"/><text class="t" x="370" y="328" text-anchor="middle">Prepare SecondaryBootInfo</text><text class="s" x="370" y="358" text-anchor="middle">logical ID · MPIDR · physical temp stack · kernel stack</text><text class="s" x="370" y="386" text-anchor="middle">page-table roots / continuation PA / per-CPU pointer</text>
+  <path class="l" d="M370 410 L370 470"/>
+  <rect class="b" x="90" y="470" width="560" height="120"/><text class="t" x="370" y="508" text-anchor="middle">Release CPU using FDT-described method</text><text class="s" x="370" y="538" text-anchor="middle">PSCI CPU_ON or spin-table release address</text><text class="s" x="370" y="566" text-anchor="middle">publish descriptor before release with required ordering</text>
+  <path class="l" d="M650 530 L850 530"/>
+
+  <rect class="b" x="850" y="470" width="560" height="120"/><text class="t" x="1130" y="508" text-anchor="middle">Physical `aarch64_secondary_entry`</text><text class="s" x="1130" y="538" text-anchor="middle">DAIF masked · read MPIDR · no global init</text><text class="s" x="1130" y="566" text-anchor="middle">locate prepared descriptor without heap dependence</text>
+  <path class="l" d="M1130 590 L1130 650"/>
+  <rect class="b" x="850" y="650" width="560" height="135"/><text class="t" x="1130" y="688" text-anchor="middle">Establish private CPU state</text><text class="s" x="1130" y="718" text-anchor="middle">EL1h · temporary SP_EL1 · VBAR_EL1</text><text class="s" x="1130" y="746" text-anchor="middle">MAIR/TCR/TTBR → enable MMU → high continuation</text><text class="s" x="1130" y="774" text-anchor="middle">switch to permanent guarded kernel stack</text>
+  <path class="l" d="M1130 785 L1130 845"/>
+  <rect class="b" x="850" y="845" width="560" height="135"/><text class="t" x="1130" y="883" text-anchor="middle">Per-CPU runtime initialization</text><text class="s" x="1130" y="913" text-anchor="middle">percpu pointer · GIC/local CPU interface · timer state</text><text class="s" x="1130" y="941" text-anchor="middle">idle/current task · IRQ/preemption counters</text><text class="s" x="1130" y="969" text-anchor="middle">publish ONLINE with release semantics</text>
+  <path class="l" d="M850 930 L650 930"/>
+
+  <rect class="b" x="90" y="870" width="560" height="120"/><text class="t" x="370" y="908" text-anchor="middle">Wait with acquire semantics</text><text class="s" x="370" y="938" text-anchor="middle">timeout/diagnostic path identifies MPIDR that failed</text><text class="s" x="370" y="966" text-anchor="middle">never infer ONLINE from console output alone</text>
+  <path class="l" d="M370 990 L370 1050"/>
+  <rect class="b" x="90" y="1050" width="560" height="100"/><text class="t" x="370" y="1088" text-anchor="middle">All requested CPUs online</text><text class="s" x="370" y="1118" text-anchor="middle">scheduler / IPI / TLB shootdown tests may start</text>
+  <path class="l" d="M1130 980 L1130 1050"/>
+  <rect class="b" x="850" y="1050" width="560" height="100"/><text class="t" x="1130" y="1088" text-anchor="middle">Enter idle/scheduler</text><text class="s" x="1130" y="1118" text-anchor="middle">interrupts enabled only after CPU-local IRQ state is ready</text>
+</svg>

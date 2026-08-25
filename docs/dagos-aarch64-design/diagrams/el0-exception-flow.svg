@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1080" viewBox="0 0 1500 1080" role="img" aria-labelledby="title desc">
+  <title id="title">AArch64 EL0 to EL1 exception flow in Dagos</title>
+  <desc id="desc">Shows EL0 execution using SP_EL0, exception entry to lower EL AArch64 vector at EL1 using SP_EL1, ExceptionFrame dispatch and ERET.</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker><style>.b{fill:#fff;stroke:#222;stroke-width:2;rx:10}.t{font:19px sans-serif;fill:#111}.h{font:700 28px sans-serif;fill:#111}.s{font:16px sans-serif;fill:#222}.l{stroke:#222;stroke-width:2.5;fill:none;marker-end:url(#a)}.sep{stroke:#555;stroke-width:2;stroke-dasharray:10 8}</style></defs>
+  <text class="h" x="750" y="42" text-anchor="middle">EL0 → EL1 exception / syscall / IRQ path</text>
+  <text class="t" x="70" y="95">EL0</text><line class="sep" x1="40" y1="120" x2="1460" y2="120"/>
+
+  <rect class="b" x="130" y="165" width="460" height="130"/><text class="t" x="360" y="204" text-anchor="middle">User task executes at EL0t</text><text class="s" x="360" y="235" text-anchor="middle">SP = SP_EL0 → user stack</text><text class="s" x="360" y="263" text-anchor="middle">TTBR0_EL1 = process mappings</text>
+  <rect class="b" x="910" y="165" width="460" height="130"/><text class="t" x="1140" y="204" text-anchor="middle">EL1 kernel stack already assigned</text><text class="s" x="1140" y="235" text-anchor="middle">SP_EL1 → this task's kernel stack</text><text class="s" x="1140" y="263" text-anchor="middle">never points into user memory</text>
+
+  <path class="l" d="M360 295 L360 365"/><text class="s" x="390" y="335">SVC / fault / IRQ</text>
+  <line class="sep" x1="40" y1="400" x2="1460" y2="400"/><text class="t" x="70" y="438">EL1</text>
+
+  <rect class="b" x="130" y="465" width="460" height="120"/><text class="t" x="360" y="503" text-anchor="middle">CPU selects lower-EL AArch64 vector</text><text class="s" x="360" y="533" text-anchor="middle">sync +0x400 · IRQ +0x480 · FIQ +0x500 · SError +0x580</text><text class="s" x="360" y="560" text-anchor="middle">hardware records ELR_EL1 / SPSR_EL1 / syndrome state</text>
+  <path class="l" d="M590 525 L765 525"/>
+  <rect class="b" x="765" y="465" width="590" height="120"/><text class="t" x="1060" y="503" text-anchor="middle">Assembly prologue uses SP_EL1</text><text class="s" x="1060" y="533" text-anchor="middle">allocate 16-byte-aligned ExceptionFrame</text><text class="s" x="1060" y="560" text-anchor="middle">save x0-x30, SP_EL0, ELR/SPSR/ESR/FAR, VectorKind</text>
+
+  <path class="l" d="M1060 585 L1060 655"/>
+  <rect class="b" x="765" y="655" width="590" height="145"/><text class="t" x="1060" y="694" text-anchor="middle">Zig `exception_dispatch(frame)`</text><text class="s" x="1060" y="726" text-anchor="middle">lower-A64 sync: decode ESR → SVC64 or user fault</text><text class="s" x="1060" y="754" text-anchor="middle">lower-A64 IRQ: acknowledge controller → device/timer handler</text><text class="s" x="1060" y="782" text-anchor="middle">may modify saved x0, ELR, SPSR or schedule another task</text>
+
+  <path class="l" d="M765 725 L590 725"/>
+  <rect class="b" x="130" y="655" width="460" height="145"/><text class="t" x="360" y="694" text-anchor="middle">Policy result</text><text class="s" x="360" y="726" text-anchor="middle">syscall → result in saved x0</text><text class="s" x="360" y="754" text-anchor="middle">recoverable IRQ → resume</text><text class="s" x="360" y="782" text-anchor="middle">bad user fault → terminate task, choose another frame</text>
+
+  <path class="l" d="M1060 800 L1060 870"/>
+  <rect class="b" x="765" y="870" width="590" height="120"/><text class="t" x="1060" y="908" text-anchor="middle">Common assembly restore</text><text class="s" x="1060" y="938" text-anchor="middle">restore SP_EL0, ELR_EL1, SPSR_EL1, x0-x30</text><text class="s" x="1060" y="965" text-anchor="middle">deallocate frame → ERET</text>
+  <path class="l" d="M765 930 L590 930 L360 930 L360 800"/>
+  <text class="s" x="570" y="915" text-anchor="middle">ERET to selected EL0 context</text>
+</svg>

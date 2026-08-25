@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">Dagos architecture layering</title>
+  <desc id="desc">Layered dependency diagram from kernel subsystems through platform, firmware, SoC, drivers, and AArch64 architecture to hardware.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker>
+    <style>
+      .box{fill:#fff;stroke:#222;stroke-width:2;rx:12;ry:12}.title{font:700 28px sans-serif;fill:#111}.t{font:20px sans-serif;fill:#111}.small{font:17px sans-serif;fill:#222}.arrow{stroke:#222;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.dash{stroke:#555;stroke-width:2;stroke-dasharray:8 8;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <text class="title" x="700" y="45" text-anchor="middle">Dagos: dependency and responsibility layers</text>
+
+  <rect class="box" x="250" y="85" width="900" height="110"/>
+  <text class="t" x="700" y="120" text-anchor="middle">kernel/</text>
+  <text class="small" x="700" y="154" text-anchor="middle">console · panic · memory · IRQ core · SMP · scheduler · process · syscall</text>
+  <text class="small" x="700" y="180" text-anchor="middle">depends on abstractions; never on concrete board register addresses</text>
+
+  <rect class="box" x="80" y="275" width="360" height="125"/>
+  <text class="t" x="260" y="312" text-anchor="middle">platform/</text>
+  <text class="small" x="260" y="344" text-anchor="middle">boot contract · selected devices</text>
+  <text class="small" x="260" y="372" text-anchor="middle">link/load address · validation</text>
+
+  <rect class="box" x="520" y="275" width="360" height="125"/>
+  <text class="t" x="700" y="312" text-anchor="middle">firmware/</text>
+  <text class="small" x="700" y="344" text-anchor="middle">FDT parser · address translation</text>
+  <text class="small" x="700" y="372" text-anchor="middle">PSCI conduit and calls</text>
+
+  <rect class="box" x="960" y="275" width="360" height="125"/>
+  <text class="t" x="1140" y="312" text-anchor="middle">drivers/</text>
+  <text class="small" x="1140" y="344" text-anchor="middle">PL011 · GICv2 · BCM IRQ · GPIO</text>
+  <text class="small" x="1140" y="372" text-anchor="middle">device semantics, not board identity</text>
+
+  <rect class="box" x="250" y="500" width="390" height="125"/>
+  <text class="t" x="445" y="537" text-anchor="middle">soc/</text>
+  <text class="small" x="445" y="569" text-anchor="middle">BCM2837 · BCM2711 · BCM2712</text>
+  <text class="small" x="445" y="597" text-anchor="middle">integration, buses, clocks, wiring</text>
+
+  <rect class="box" x="760" y="500" width="390" height="125"/>
+  <text class="t" x="955" y="537" text-anchor="middle">arch/aarch64/</text>
+  <text class="small" x="955" y="569" text-anchor="middle">ELs · vectors · MMU · TLB · barriers</text>
+  <text class="small" x="955" y="597" text-anchor="middle">timer · atomics · context · user return</text>
+
+  <rect class="box" x="350" y="745" width="700" height="95"/>
+  <text class="t" x="700" y="783" text-anchor="middle">Hardware / emulator</text>
+  <text class="small" x="700" y="816" text-anchor="middle">CPU + memory system + interrupt controller + UART + firmware-described devices</text>
+
+  <path class="arrow" d="M500 195 L300 275"/>
+  <path class="arrow" d="M700 195 L700 275"/>
+  <path class="arrow" d="M900 195 L1100 275"/>
+  <path class="arrow" d="M260 400 L420 500"/>
+  <path class="arrow" d="M700 400 L860 500"/>
+  <path class="arrow" d="M1140 400 L1035 500"/>
+  <path class="dash" d="M440 337 L960 337"/>
+  <path class="arrow" d="M445 625 L600 745"/>
+  <path class="arrow" d="M955 625 L800 745"/>
+</svg>

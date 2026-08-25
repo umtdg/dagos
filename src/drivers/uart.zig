@@ -1,6 +1,8 @@
 const arch = @import("../arch.zig");
 const VirtualAddress = arch.memory.VirtualAddress;
 
+const console = @import("../console.zig");
+
 pub const Pl011 = struct {
     base: VirtualAddress,
 

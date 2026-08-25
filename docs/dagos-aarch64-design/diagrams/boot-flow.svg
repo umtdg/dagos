@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1500" viewBox="0 0 1400 1500" role="img" aria-labelledby="title desc">
+  <title id="title">Dagos primary AArch64 boot flow</title>
+  <desc id="desc">Flow from firmware or QEMU entry through EL normalization, boot stack, vectors, BSS, console, FDT, and kernel main.</desc>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#222"/></marker><style>.b{fill:#fff;stroke:#222;stroke-width:2;rx:10}.d{fill:#fff;stroke:#222;stroke-width:2}.t{font:19px sans-serif;fill:#111}.h{font:700 28px sans-serif;fill:#111}.s{font:16px sans-serif;fill:#222}.l{stroke:#222;stroke-width:2.5;fill:none;marker-end:url(#a)}</style></defs>
+  <text class="h" x="700" y="42" text-anchor="middle">Primary boot flow</text>
+
+  <rect class="b" x="430" y="75" width="540" height="80"/><text class="t" x="700" y="110" text-anchor="middle">Firmware / QEMU transfers control to `_start`</text><text class="s" x="700" y="136" text-anchor="middle">AArch64; target contract supplies/validates x0 DTB convention</text>
+  <path class="l" d="M700 155 L700 205"/>
+  <rect class="b" x="430" y="205" width="540" height="90"/><text class="t" x="700" y="242" text-anchor="middle">Mask DAIF; preserve x0-x3, MPIDR_EL1, CurrentEL</text><text class="s" x="700" y="270" text-anchor="middle">No Zig, globals, allocator, or console yet</text>
+  <path class="l" d="M700 295 L700 345"/>
+  <rect class="b" x="430" y="345" width="540" height="80"/><text class="t" x="700" y="380" text-anchor="middle">Select current EL's SPx and install aligned boot stack</text><text class="s" x="700" y="405" text-anchor="middle">Stack lives outside BSS clear range</text>
+  <path class="l" d="M700 425 L700 475"/>
+
+  <polygon class="d" points="700,475 900,555 700,635 500,555"/><text class="t" x="700" y="550" text-anchor="middle">CurrentEL?</text>
+  <path class="l" d="M500 555 L275 555 L275 690"/><text class="s" x="380" y="535" text-anchor="middle">EL2</text>
+  <rect class="b" x="75" y="690" width="400" height="120"/><text class="t" x="275" y="728" text-anchor="middle">Normalize EL2 → EL1h</text><text class="s" x="275" y="756" text-anchor="middle">HCR_EL2 lower-EL AArch64 policy</text><text class="s" x="275" y="782" text-anchor="middle">timer traps/conduit state · SP_EL1 · SPSR/ELR · ERET</text>
+  <path class="l" d="M475 750 L575 750"/>
+
+  <path class="l" d="M900 555 L1125 555 L1125 690"/><text class="s" x="1020" y="535" text-anchor="middle">EL1</text>
+  <rect class="b" x="925" y="690" width="400" height="120"/><text class="t" x="1125" y="728" text-anchor="middle">Normalize direct EL1 entry</text><text class="s" x="1125" y="756" text-anchor="middle">SPSel = SP_EL1; establish same kernel invariant</text><text class="s" x="1125" y="782" text-anchor="middle">do not depend on firmware VBAR/SP state</text>
+  <path class="l" d="M925 750 L825 750"/>
+
+  <path class="l" d="M700 635 L700 690"/><text class="s" x="755" y="665">EL0/EL3 → fatal unsupported-entry path</text>
+  <rect class="b" x="575" y="710" width="250" height="80"/><text class="t" x="700" y="745" text-anchor="middle">EL1h common path</text><text class="s" x="700" y="771" text-anchor="middle">DAIF still masked</text>
+  <path class="l" d="M700 790 L700 840"/>
+  <rect class="b" x="430" y="840" width="540" height="90"/><text class="t" x="700" y="878" text-anchor="middle">Install VBAR_EL1 + ISB</text><text class="s" x="700" y="905" text-anchor="middle">all 16 slots exist; early faults cannot use full Zig runtime yet</text>
+  <path class="l" d="M700 930 L700 980"/>
+  <rect class="b" x="430" y="980" width="540" height="90"/><text class="t" x="700" y="1018" text-anchor="middle">Boot CPU clears `[__bss_start, __bss_end)` exactly once</text><text class="s" x="700" y="1045" text-anchor="middle">boot stack excluded; secondary CPUs never run this path</text>
+  <path class="l" d="M700 1070 L700 1120"/>
+  <rect class="b" x="430" y="1120" width="540" height="90"/><text class="t" x="700" y="1158" text-anchor="middle">Call `arch_early_main(dtb_pa, mpidr, entry_el)`</text><text class="s" x="700" y="1185" text-anchor="middle">AAPCS64; valid stack and initialized BSS now exist</text>
+  <path class="l" d="M700 1210 L700 1260"/>
+  <rect class="b" x="430" y="1260" width="540" height="100"/><text class="t" x="700" y="1298" text-anchor="middle">Early platform runtime</text><text class="s" x="700" y="1326" text-anchor="middle">polling PL011 → exception-runtime-ready → validate FDT</text><text class="s" x="700" y="1352" text-anchor="middle">RAM / reservations / CPUs / devices / startup method</text>
+  <path class="l" d="M700 1360 L700 1410"/>
+  <rect class="b" x="430" y="1410" width="540" height="65"/><text class="t" x="700" y="1450" text-anchor="middle">Proceed to MMU/memory milestone</text>
+</svg>
